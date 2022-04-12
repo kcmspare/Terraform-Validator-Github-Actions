@@ -1,0 +1,27 @@
+name: Terraform-validator
+on: [pull_request, push]
+
+jobs:
+  Terraform-Validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v1
+          
+      - name: tfsec scan
+      # Help - https://github.com/marketplace/actions/tfsec-action
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: terraform/
+          version: latest
+          soft_fail: true 
+          
+      - name: checkov scan
+      # Help - https://github.com/marketplace/actions/checkov-github-action
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: terraform/
+          quiet: false # true=displays only failed checks
+          framework: terraform
+          soft_fail: true # true=do not return an error code if there are failed checks
+          #skip_check: CKV_AWS_1 # check ids to skip (csv)
